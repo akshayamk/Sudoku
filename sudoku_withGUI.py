@@ -77,13 +77,15 @@ class SolveSudoku:
         else:
             return True
 
+
 class MakeGui:
-    def __init__(self, screen, grid, board):
+    def __init__(self, screen, grid, board, checkanswer):
         self.screen = screen
         self.grid = grid
         self.board = board
         self.correctcounter = 0
         self.wrongcounter = 0
+        self.checkanswer = checkanswer
         self.draw()
 
     
@@ -140,14 +142,14 @@ class MakeGui:
         pygame.draw.rect(self.screen, LINE_COLOR, (450, 530, 40, 25)) # for counter
         countertext = counter.render("Number of correct tries:", 1 , COLOUR_BLACK)
         self.screen.blit(countertext, (255, 535))
-        text = counter.render(str(self.correctcounter), 1, COLOUR_BLACK) 
+        text = counter.render(str(0), 1, COLOUR_BLACK) 
         self.screen.blit(text, (455, 535))
 
         pygame.draw.rect(self.screen, LINE_COLOR, (250, 560, 180, 25)) #for text
         pygame.draw.rect(self.screen, LINE_COLOR, (450, 560, 40, 25)) # for counter
         countertext = counter.render("Number of wrong tries:", 1 , COLOUR_BLACK)
         self.screen.blit(countertext, (255, 565))
-        text = counter.render(str(self.wrongcounter), 1, COLOUR_BLACK) 
+        text = counter.render(str(0), 1, COLOUR_BLACK) 
         self.screen.blit(text, (455, 565))
     
     
@@ -166,7 +168,6 @@ class MakeGui:
         text = counter.render(str(wrongcounter), 1, COLOUR_BLACK) 
         self.screen.blit(text, (455, 565))
 
-
     #user select box to key in 
     def selectbox(self, xpos, ypos):
         x = int(xpos // (SQUARE_WIDTH))
@@ -177,7 +178,7 @@ class MakeGui:
             return x, y
         return False
     
-    def typeintobox(self, xpos, ypos, key, selected):
+    def typeintobox(self, xpos, ypos, key):
         typefont = pygame.font.Font('freesansbold.ttf', 32)
         if not self.selectbox(xpos, ypos):
             x, y = None, None
@@ -191,6 +192,7 @@ class MakeGui:
     def checkwithsolution(self, x, y, typefont, key):
         displayfont = pygame.font.Font('freesansbold.ttf', 23)
         pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60))
+        self.checkanswer[y][x] = key #store response
         if self.board[y][x] == key:
             displaytext = displayfont.render("Correct Answer!", 1, COLOUR_BLACK) 
             self.counter(True)
@@ -214,7 +216,7 @@ class MakeGui:
 
     def getsolution(self):
         typefont = pygame.font.Font('freesansbold.ttf', 32)
-        displayfont = pygame.font.Font('freesansbold.ttf', 23)
+        
         pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60))
         for i in range(BOARD_ROWS):
             for j in range(BOARD_ROWS):
@@ -224,12 +226,25 @@ class MakeGui:
                 #pygame.time.wait(100)
         
         self.drawboldlines()
-        
+        self.printsudokusolved()
+
+    def printsudokusolved(self):
+        displayfont = pygame.font.Font('freesansbold.ttf', 23)
         displaytext = displayfont.render("Sudoku Solved!", 1, COLOUR_BLACK) 
         self.screen.blit(displaytext, (5, 575))
     
     def restart(self):
         self.draw()
+
+    
+    def checkcomplete(self):
+        for row in range(BOARD_ROWS):
+            for col in range(BOARD_ROWS):
+                if not self.checkanswer[row][col] == self.board[row][col]:  
+                    return 
+        
+        self.printsudokusolved()
+                    
 
 
 
@@ -247,11 +262,11 @@ def main():
     if not s.solvesudoku(board):
         sys.exit() #no solution exists for sudoku
     
-    m = MakeGui(screen, grid, board)
+    checkanswer = [x[:] for x in grid]
+    m = MakeGui(screen, grid, board, checkanswer)
 
     while True:
         key = None
-        selected = None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -287,10 +302,11 @@ def main():
                     key = None
 
                 if key != None:
-                    m.typeintobox(x, y, key, selected)
+                    m.typeintobox(x, y, key)
                 
 
-        
+            m.checkcomplete()
+
         pygame.display.update()
 
 if __name__ == "__main__":
