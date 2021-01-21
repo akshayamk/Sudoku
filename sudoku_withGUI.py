@@ -79,155 +79,155 @@ class SolveSudoku:
 
 class MakeGui:
     def __init__(self, screen):
-        self.draw(screen)
+        self.screen = screen
+        self.correctcounter = 0
+        self.wrongcounter = 0
+        self.draw()
 
     
-    def draw(self, screen):
+    def draw(self):
         
         font = pygame.font.Font('freesansbold.ttf', 32)
 
         for i in range (BOARD_ROWS): 
             for j in range (BOARD_ROWS):  
                     # Fill blue color in already numbered grid 
-                    pygame.draw.rect(screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
+                    pygame.draw.rect(self.screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
                     if grid[i][j]!= 0:
                     # Fill gird with default numbers specified 
                         text = font.render(str(grid[i][j]), 1, COLOUR_BLACK) 
-                        screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
+                        self.screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
         
-        self.correctcounter = 0
-        self.wrongcounter = 0
-        
-        self.drawboldlines(screen)
-        self.makebuttons(screen)
-        self.counterUI(screen)
+        self.drawboldlines()
+        self.makebuttons()
+        self.counterUI()
 
-    def drawboldlines(self, screen):
+    def drawboldlines(self):
                     
         # Draw lines horizontally and verticallyto form grid            
-        for i in range(10): 
+        for i in range(BOARD_ROWS+1): 
             if i % 3 == 0 : 
                 boldwidth = 5
             else: 
                 boldwidth = 1
-            pygame.draw.line(screen, (0, 0, 0), (0, i * SQUARE_WIDTH), (500, i * SQUARE_WIDTH), boldwidth) 
-            pygame.draw.line(screen, (0, 0, 0), (i * SQUARE_WIDTH, 0), (i * SQUARE_WIDTH, 500), boldwidth) 
+            pygame.draw.line(self.screen, (0, 0, 0), (0, i * SQUARE_WIDTH), (500, i * SQUARE_WIDTH), boldwidth) 
+            pygame.draw.line(self.screen, (0, 0, 0), (i * SQUARE_WIDTH, 0), (i * SQUARE_WIDTH, 500), boldwidth) 
         
     
 
-    def makebuttons(self, screen):
+    def makebuttons(self):
         
         #Get Solution Button
         #check = pygame.font.SysFont('Arial', 18)
         check = pygame.font.Font('freesansbold.ttf', 18)
-        pygame.draw.rect(screen, LINE_COLOR, (0, 530, 120, 30))
-        pygame.draw.rect(screen, LINE_COLOR, (0, 570, 200, 60)) #for displaying correct/wrong ans
+        pygame.draw.rect(self.screen, LINE_COLOR, (0, 530, 120, 30))
+        pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60)) #for displaying correct/wrong ans
         checktext = check.render("Get Solution", 1 , COLOUR_BLACK)
-        screen.blit(checktext, (5, 535))
+        self.screen.blit(checktext, (5, 535))
 
         #Retry button
-        pygame.draw.rect(screen, LINE_COLOR, (0, 645, 80, 30))
+        pygame.draw.rect(self.screen, LINE_COLOR, (0, 645, 80, 30))
         checktext = check.render("Restart", 1 , COLOUR_BLACK)
-        screen.blit(checktext, (5, 650))
+        self.screen.blit(checktext, (5, 650))
 
 
     
-    def counterUI(self, screen):
+    def counterUI(self):
         counter = pygame.font.Font('freesansbold.ttf', 15)
-        pygame.draw.rect(screen, LINE_COLOR, (250, 530, 180, 25)) # for text
-        pygame.draw.rect(screen, LINE_COLOR, (450, 530, 40, 25)) # for counter
+        pygame.draw.rect(self.screen, LINE_COLOR, (250, 530, 180, 25)) # for text
+        pygame.draw.rect(self.screen, LINE_COLOR, (450, 530, 40, 25)) # for counter
         countertext = counter.render("Number of correct tries:", 1 , COLOUR_BLACK)
-        screen.blit(countertext, (255, 535))
+        self.screen.blit(countertext, (255, 535))
         text = counter.render(str(self.correctcounter), 1, COLOUR_BLACK) 
-        screen.blit(text, (455, 535))
+        self.screen.blit(text, (455, 535))
 
-        pygame.draw.rect(screen, LINE_COLOR, (250, 560, 180, 25)) #for text
-        pygame.draw.rect(screen, LINE_COLOR, (450, 560, 40, 25)) # for counter
+        pygame.draw.rect(self.screen, LINE_COLOR, (250, 560, 180, 25)) #for text
+        pygame.draw.rect(self.screen, LINE_COLOR, (450, 560, 40, 25)) # for counter
         countertext = counter.render("Number of wrong tries:", 1 , COLOUR_BLACK)
-        screen.blit(countertext, (255, 565))
+        self.screen.blit(countertext, (255, 565))
         text = counter.render(str(self.wrongcounter), 1, COLOUR_BLACK) 
-        screen.blit(text, (455, 565))
+        self.screen.blit(text, (455, 565))
     
     
-    def updatecorrectcounterUI(self, correctcounter, screen):
+    def updatecorrectcounterUI(self, correctcounter):
         counter = pygame.font.Font('freesansbold.ttf', 15)
 
-        pygame.draw.rect(screen, LINE_COLOR, (450, 530, 40, 25)) # for counter
+        pygame.draw.rect(self.screen, LINE_COLOR, (450, 530, 40, 25)) # for counter
         text = counter.render(str(correctcounter), 1, COLOUR_BLACK) 
-        screen.blit(text, (455, 535))
+        self.screen.blit(text, (455, 535))
 
 
-    def updatewrongcounterUI(self, wrongcounter, screen):
+    def updatewrongcounterUI(self, wrongcounter):
         counter = pygame.font.Font('freesansbold.ttf', 15)
 
-        pygame.draw.rect(screen, LINE_COLOR, (450, 560, 40, 25)) # for counter
+        pygame.draw.rect(self.screen, LINE_COLOR, (450, 560, 40, 25)) # for counter
         text = counter.render(str(wrongcounter), 1, COLOUR_BLACK) 
-        screen.blit(text, (455, 565))
+        self.screen.blit(text, (455, 565))
 
 
     #user select box to key in 
-    def selectbox(self, xpos, ypos, screen):
+    def selectbox(self, xpos, ypos):
         x = int(xpos // (SQUARE_WIDTH))
         y = int(ypos // (SQUARE_WIDTH))
 
         if grid[y][x] == 0:
-            pygame.draw.rect(screen, COLOUR_YELLOW, (x * SQUARE_WIDTH, y * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH +1))
+            pygame.draw.rect(self.screen, COLOUR_YELLOW, (x * SQUARE_WIDTH, y * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH +1))
             return x, y
         return False
     
-    def typeintobox(self, xpos, ypos, screen, key, selected):
+    def typeintobox(self, xpos, ypos, key, selected):
         typefont = pygame.font.Font('freesansbold.ttf', 32)
-        if not self.selectbox(xpos, ypos, screen):
+        if not self.selectbox(xpos, ypos):
             x, y = None, None
         else:
-            x,y = self.selectbox(xpos, ypos, screen)
+            x,y = self.selectbox(xpos, ypos)
             typetext = typefont.render(str(key), 1, COLOUR_BLACK) 
-            screen.blit(typetext, (x * SQUARE_WIDTH + 15, y * SQUARE_WIDTH + 15))
-            self.drawboldlines(screen)
-            self.checkwithsolution(screen, x, y, typefont)
+            self.screen.blit(typetext, (x * SQUARE_WIDTH + 15, y * SQUARE_WIDTH + 15))
+            self.drawboldlines()
+            self.checkwithsolution(x, y, typefont)
     
-    def checkwithsolution(self, screen, x, y, typefont):
+    def checkwithsolution(self, x, y, typefont):
         displayfont = pygame.font.Font('freesansbold.ttf', 23)
-        pygame.draw.rect(screen, LINE_COLOR, (0, 570, 200, 60))
+        pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60))
         if board[y][x] == key:
             displaytext = displayfont.render("Correct Answer!", 1, COLOUR_BLACK) 
-            self.counter(screen, True)
+            self.counter(True)
         else:
             displaytext = displayfont.render("Wrong Answer!", 1, COLOUR_BLACK) 
-            pygame.draw.rect(screen, COLOUR_RED, (x * SQUARE_WIDTH, y * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH +1))
+            pygame.draw.rect(self.screen, COLOUR_RED, (x * SQUARE_WIDTH, y * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH +1))
             typetext = typefont.render(str(key), 1, COLOUR_BLACK) 
-            screen.blit(typetext, (x * SQUARE_WIDTH + 15, y * SQUARE_WIDTH + 15))
-            self.counter(screen, False)
+            self.screen.blit(typetext, (x * SQUARE_WIDTH + 15, y * SQUARE_WIDTH + 15))
+            self.counter(False)
         
-        screen.blit(displaytext, (5, 575))
+        self.screen.blit(displaytext, (5, 575))
     
-    def counter(self, screen, correct):
+    def counter(self, correct):
 
         if correct:
             self.correctcounter += 1
-            self.updatecorrectcounterUI(self.correctcounter, screen)
+            self.updatecorrectcounterUI(self.correctcounter)
         else:
             self.wrongcounter += 1
-            self.updatewrongcounterUI(self.wrongcounter, screen)
+            self.updatewrongcounterUI(self.wrongcounter)
 
-    def getsolution(self, screen):
+    def getsolution(self):
         typefont = pygame.font.Font('freesansbold.ttf', 32)
         displayfont = pygame.font.Font('freesansbold.ttf', 23)
-        pygame.draw.rect(screen, LINE_COLOR, (0, 570, 200, 60))
+        pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60))
         for i in range(BOARD_ROWS):
             for j in range(BOARD_ROWS):
-                pygame.draw.rect(screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
+                pygame.draw.rect(self.screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
                 text = typefont.render(str(board[i][j]), 1, COLOUR_BLACK) 
-                screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
+                self.screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
                 #pygame.time.wait(100)
         
-        self.drawboldlines(screen)
+        self.drawboldlines()
         
         displaytext = displayfont.render("Sudoku Solved!", 1, COLOUR_BLACK) 
-        screen.blit(displaytext, (5, 575))
+        self.screen.blit(displaytext, (5, 575))
     
-    def restart(self, screen):
-        self.draw(screen)
+    def restart(self):
+        self.draw()
 
 
     
@@ -263,9 +263,9 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
             if 0 <= x <= 120 and 530 <= y <= 560:
-                m.getsolution(screen)
+                m.getsolution()
             if 0 <= x <= 80 and 645 <= y <= 675:
-                m.restart(screen)
+                m.restart()
 
 
         if event.type == pygame.KEYDOWN:
@@ -291,7 +291,7 @@ while True:
                 key = None
 
             if key != None:
-                m.typeintobox(x, y, screen, key, selected)
+                m.typeintobox(x, y, key, selected)
             
 
     
