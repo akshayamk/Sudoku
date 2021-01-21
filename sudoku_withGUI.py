@@ -78,8 +78,10 @@ class SolveSudoku:
             return True
 
 class MakeGui:
-    def __init__(self, screen):
+    def __init__(self, screen, grid, board):
         self.screen = screen
+        self.grid = grid
+        self.board = board
         self.correctcounter = 0
         self.wrongcounter = 0
         self.draw()
@@ -93,9 +95,9 @@ class MakeGui:
             for j in range (BOARD_ROWS):  
                     # Fill blue color in already numbered grid 
                     pygame.draw.rect(self.screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
-                    if grid[i][j]!= 0:
+                    if self.grid[i][j]!= 0:
                     # Fill gird with default numbers specified 
-                        text = font.render(str(grid[i][j]), 1, COLOUR_BLACK) 
+                        text = font.render(str(self.grid[i][j]), 1, COLOUR_BLACK) 
                         self.screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
         
         self.drawboldlines()
@@ -170,7 +172,7 @@ class MakeGui:
         x = int(xpos // (SQUARE_WIDTH))
         y = int(ypos // (SQUARE_WIDTH))
 
-        if grid[y][x] == 0:
+        if self.grid[y][x] == 0:
             pygame.draw.rect(self.screen, COLOUR_YELLOW, (x * SQUARE_WIDTH, y * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH +1))
             return x, y
         return False
@@ -184,12 +186,12 @@ class MakeGui:
             typetext = typefont.render(str(key), 1, COLOUR_BLACK) 
             self.screen.blit(typetext, (x * SQUARE_WIDTH + 15, y * SQUARE_WIDTH + 15))
             self.drawboldlines()
-            self.checkwithsolution(x, y, typefont)
+            self.checkwithsolution(x, y, typefont, key)
     
-    def checkwithsolution(self, x, y, typefont):
+    def checkwithsolution(self, x, y, typefont, key):
         displayfont = pygame.font.Font('freesansbold.ttf', 23)
         pygame.draw.rect(self.screen, LINE_COLOR, (0, 570, 200, 60))
-        if board[y][x] == key:
+        if self.board[y][x] == key:
             displaytext = displayfont.render("Correct Answer!", 1, COLOUR_BLACK) 
             self.counter(True)
         else:
@@ -217,7 +219,7 @@ class MakeGui:
         for i in range(BOARD_ROWS):
             for j in range(BOARD_ROWS):
                 pygame.draw.rect(self.screen, COLOUR_BLUE, (j * SQUARE_WIDTH, i * SQUARE_WIDTH, SQUARE_WIDTH + 1, SQUARE_WIDTH + 1))
-                text = typefont.render(str(board[i][j]), 1, COLOUR_BLACK) 
+                text = typefont.render(str(self.board[i][j]), 1, COLOUR_BLACK) 
                 self.screen.blit(text, (j * SQUARE_WIDTH + 15, i * SQUARE_WIDTH + 15)) 
                 #pygame.time.wait(100)
         
@@ -230,70 +232,67 @@ class MakeGui:
         self.draw()
 
 
+
+def main():
+    #copy board to grid
+    grid = [x[:] for x in board]
+
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption('Sudoku')
+
+    #solve sudoku
+    s = SolveSudoku()
+
+    if not s.solvesudoku(board):
+        sys.exit() #no solution exists for sudoku
     
+    m = MakeGui(screen, grid, board)
+
+    while True:
+        key = None
+        selected = None
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                if 0 <= x <= 120 and 530 <= y <= 560: #check if Get Solution button is pressed
+                    m.getsolution()
+                if 0 <= x <= 80 and 645 <= y <= 675: #check if Restart button is pressed
+                    m.restart()
 
 
-        #timer
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1:
+                    key = 1
+                elif event.key == pygame.K_2:
+                    key = 2
+                elif event.key == pygame.K_3:
+                    key = 3
+                elif event.key == pygame.K_4:
+                    key = 4
+                elif event.key == pygame.K_5:
+                    key = 5
+                elif event.key == pygame.K_6:
+                    key = 6
+                elif event.key == pygame.K_7:
+                    key = 7
+                elif event.key == pygame.K_8:
+                    key = 8
+                elif event.key == pygame.K_9:
+                    key = 9
+                else:
+                    key = None
 
-#copy board to grid
-grid = [x[:] for x in board]
+                if key != None:
+                    m.typeintobox(x, y, key, selected)
+                
 
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Sudoku')
+        
+        pygame.display.update()
 
-m = MakeGui(screen)
-
-#solve sudoku
-s = SolveSudoku()
-
-if not s.solvesudoku(board):
-    sys.exit()
-
-
-
-
-while True:
-    key = None
-    selected = None
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-            if 0 <= x <= 120 and 530 <= y <= 560:
-                m.getsolution()
-            if 0 <= x <= 80 and 645 <= y <= 675:
-                m.restart()
-
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_1:
-                key = 1
-            elif event.key == pygame.K_2:
-                key = 2
-            elif event.key == pygame.K_3:
-                key = 3
-            elif event.key == pygame.K_4:
-                key = 4
-            elif event.key == pygame.K_5:
-                key = 5
-            elif event.key == pygame.K_6:
-                key = 6
-            elif event.key == pygame.K_7:
-                key = 7
-            elif event.key == pygame.K_8:
-                key = 8
-            elif event.key == pygame.K_9:
-                key = 9
-            else:
-                key = None
-
-            if key != None:
-                m.typeintobox(x, y, key, selected)
-            
-
-    
-    pygame.display.update()
+if __name__ == "__main__":
+    main()
             
